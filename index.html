@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico Previo · Martínez Palacios Consultores</title>
+<style>
+/* ============================================================
+   DESIGN TOKENS — editar aquí para cambiar la estética global
+   ============================================================ */
+:root {
+  --navy:      #2a2c4c;
+  --navy-deep: #1e2038;
+  --gold:      #ab8e70;
+  --gold-light:#c9a98a;
+  --gold-pale: #f0e8df;
+  --white:     #ffffff;
+  --off-white: #f8f7f5;
+  --gray-100:  #f2f2f0;
+  --gray-200:  #e0dedd;
+  --gray-500:  #9a9792;
+  --gray-700:  #4a4845;
+
+  /* Result colors */
+  --res-green:  #2d6a4f;
+  --res-green-bg:#d8f3dc;
+  --res-blue:   #1d4e89;
+  --res-blue-bg:#dce7f7;
+  --res-amber:  #b45309;
+  --res-amber-bg:#fef3c7;
+  --res-red:    #7c2d12;
+  --res-red-bg: #fee2e2;
+
+  --radius: 12px;
+  --radius-sm: 6px;
+  --shadow: 0 4px 24px rgba(42,44,76,.10);
+  --shadow-lg: 0 12px 48px rgba(42,44,76,.16);
+  --transition: .2s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--off-white);
+  color: var(--gray-700);
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.site-header {
+  background: var(--navy-deep);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,.25);
+}
+.header-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+/* Logo mark replaced by actual brand logo image */
+.header-text { flex: 1; }
+
+.header-tagline {
+  font-size: .72rem;
+  color: rgba(255,255,255,.55);
+  letter-spacing: .04em;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(140deg, var(--navy) 0%, var(--navy-deep) 100%);
+  padding: 52px 24px 44px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(171,142,112,.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(171,142,112,.18);
+  color: var(--gold-light);
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 100px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(171,142,112,.3);
+}
+.hero h1 {
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+  font-weight: 300;
+  color: var(--white);
+  letter-spacing: -.01em;
+  line-height: 1.25;
+  margin-bottom: 14px;
+}
+.hero h1 strong {
+  font-weight: 700;
+  color: var(--gold-light);
+}
+.hero p {
+  font-size: .95rem;
+  color: rgba(255,255,255,.65);
+  max-width: 520px;
+  margin: 0 auto 28px;
+}
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.stat { text-align: center; }
+.stat-num {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  line-height: 1;
+}
+.stat-label {
+  font-size: .7rem;
+  color: rgba(255,255,255,.45);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+/* ── PROGRESS ── */
+.progress-wrapper {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 20px 24px 0;
+}
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: .76rem;
+  color: var(--gray-500);
+  margin-bottom: 8px;
+}
+.progress-bar-track {
+  height: 4px;
+  background: var(--gray-200);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 100%);
+  border-radius: 99px;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+  width: 0%;
+}
+.step-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+.step-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gray-200);
+  transition: var(--transition);
+  cursor: pointer;
+}
+.step-dot.active { background: var(--gold); transform: scale(1.3); }
+.step-dot.done { background: var(--navy); }
+
+/* ── FORM CONTAINER ── */
+.form-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+/* ── STEP ── */
+.step {
+  display: none;
+  animation: stepIn .3s ease;
+}
+.step.active { display: block; }
+
+@keyframes stepIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.step-header {
+  padding: 32px 0 20px;
+}
+.step-eyebrow {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.step-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.25;
+}
+.step-desc {
+  font-size: .88rem;
+  color: var(--gray-500);
+  margin-top: 6px;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--gray-200);
+}
+
+/* ── FORM FIELDS ── */
+.field-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.field-group.single { grid-template-columns: 1fr; }
+@media (max-width: 600px) { .field-group { grid-template-columns: 1fr; } }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.field label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: .02em;
+}
+.field label .req { color: var(--gold); margin-left: 2px; }
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: .9rem;
+  color: var(--gray-700);
+  font-family: inherit;
+  background: var(--off-white);
+  transition: var(--transition);
+  outline: none;
+  -webkit-appearance: none;
+}
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239a9792' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+.field textarea { resize: vertical; min-height: 100px; }
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--gold);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(171,142,112,.15);
+}
+
+/* ── OPTION CARDS ── */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+.options-grid.two-col { grid-template-columns: 1fr 1fr; }
+@media (max-width: 520px) {
+  .options-grid, .options-grid.two-col { grid-template-columns: 1fr; }
+}
+
+.option-card {
+  position: relative;
+  cursor: pointer;
+}
+.option-card input[type="radio"],
+.option-card input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0; height: 0;
+}
+.option-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 15px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--off-white);
+  font-size: .875rem;
+  color: var(--gray-700);
+  line-height: 1.4;
+  user-select: none;
+}
+.option-label:hover {
+  border-color: var(--gold);
+  background: var(--gold-pale);
+}
+.option-card input:checked + .option-label {
+  border-color: var(--navy);
+  background: rgba(42,44,76,.06);
+  color: var(--navy);
+  font-weight: 600;
+}
+.option-card input:checked + .option-label .check-dot {
+  background: var(--navy);
+  border-color: var(--navy);
+}
+.option-card input:checked + .option-label .check-dot::after { opacity: 1; }
+.check-dot {
+  width: 18px; height: 18px;
+  border: 2px solid var(--gray-200);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 1px;
+  position: relative;
+  transition: var(--transition);
+}
+.check-dot::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--white);
+  opacity: 0;
+  transition: var(--transition);
+}
+/* Score badge on option */
+.option-score {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: .68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: var(--gray-200);
+  color: var(--gray-500);
+  letter-spacing: .06em;
+}
+.option-card input:checked + .option-label .option-score {
+  background: var(--gold);
+  color: var(--white);
+}
+
+/* ── NAVIGATION BUTTONS ── */
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 24px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-size: .88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  letter-spacing: .02em;
+  font-family: inherit;
+}
+.btn-primary {
+  background: var(--navy);
+  color: var(--white);
+}
+.btn-primary:hover { background: var(--navy-deep); transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn-secondary {
+  background: transparent;
+  color: var(--navy);
+  border: 1.5px solid var(--gray-200);
+}
+.btn-secondary:hover { border-color: var(--navy); background: var(--gray-100); }
+.btn-gold {
+  background: var(--gold);
+  color: var(--white);
+}
+.btn-gold:hover { background: #9a7d62; transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn-ghost {
+  background: transparent;
+  color: var(--gray-500);
+  padding: 12px 16px;
+}
+.btn-ghost:hover { color: var(--navy); }
+.btn-icon { font-size: 1rem; }
+.btn-sm { padding: 8px 16px; font-size: .8rem; }
+.btn-large { padding: 15px 32px; font-size: .95rem; }
+
+/* ── RESULT PANEL ── */
+#result-section { display: none; }
+#result-section.visible { display: block; }
+
+.result-hero {
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  border: 1.5px solid;
+}
+.result-icon {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+.result-grade {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.result-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.25;
+}
+.result-message { font-size: .9rem; line-height: 1.6; }
+
+/* Color variants */
+.result-A { background: var(--res-green-bg); border-color: #a7d7b3; color: var(--res-green); }
+.result-A .result-icon { background: var(--res-green); color: var(--white); }
+.result-B { background: var(--res-blue-bg); border-color: #a8c5e8; color: var(--res-blue); }
+.result-B .result-icon { background: var(--res-blue); color: var(--white); }
+.result-C { background: var(--res-amber-bg); border-color: #fcd34d; color: var(--res-amber); }
+.result-C .result-icon { background: var(--res-amber); color: var(--white); }
+.result-D { background: var(--res-red-bg); border-color: #fca5a5; color: var(--res-red); }
+.result-D .result-icon { background: var(--res-red); color: var(--white); }
+
+/* Score ring */
+.score-ring {
+  text-align: center;
+  padding: 20px;
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.score-ring-num {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+}
+.score-ring-label { font-size: .8rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: .1em; }
+.score-bar {
+  height: 8px;
+  background: var(--gray-200);
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 12px 0 4px;
+}
+.score-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--navy) 100%);
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+}
+
+/* Summary table */
+.summary-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.summary-header {
+  background: var(--navy);
+  padding: 14px 20px;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.summary-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: .875rem;
+}
+.summary-row:last-child { border-bottom: none; }
+.summary-key {
+  padding: 12px 16px;
+  font-weight: 600;
+  color: var(--navy);
+  background: var(--off-white);
+  font-size: .8rem;
+}
+.summary-val {
+  padding: 12px 16px;
+  color: var(--gray-700);
+  word-break: break-word;
+}
+@media (max-width: 480px) {
+  .summary-row { grid-template-columns: 1fr; }
+  .summary-key { padding-bottom: 4px; }
+  .summary-val { padding-top: 4px; }
+}
+
+/* Action buttons panel */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  text-align: center;
+  padding: 32px 24px;
+  font-size: .78rem;
+  color: var(--gray-500);
+  border-top: 1px solid var(--gray-200);
+  margin-top: 20px;
+}
+.site-footer a { color: var(--gold); text-decoration: none; }
+.site-footer strong { color: var(--navy); }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--navy);
+  color: var(--white);
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-size: .85rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-lg);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  animation: slideUp .3s ease;
+}
+.toast.show { display: flex; }
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ── MISC ── */
+.divider { height: 1px; background: var(--gray-200); margin: 20px 0; }
+.text-muted { color: var(--gray-500); font-size: .82rem; }
+.required-note { font-size: .76rem; color: var(--gray-500); margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="site-header">
+  <div class="header-inner">
+    <img src="https://cdn.prod.website-files.com/65e9cac6233da645d7f7257d/65f30a9df3b2e06205ee7c55_LOGO.svg"
+         alt="Martínez Palacios Consultores Asociados"
+         style="height:40px;width:auto;object-fit:contain;filter:brightness(0) invert(1);">
+    <div class="header-text" style="margin-left:4px;">
+      <div class="header-tagline">Transformamos negocios. Construimos resultados sostenibles.</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero">
+  <div class="hero-badge">Diagnóstico Previo · Consulta Gratuita de 30 minutos</div>
+  <h1>¿Califica su negocio para nuestra<br><strong>consulta gratuita de 30 minutos?</strong></h1>
+  <p>Complete este breve diagnóstico y reciba una evaluación inmediata. Sin compromisos.</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">10</span><span class="stat-label">Preguntas</span></div>
+    <div class="stat"><span class="stat-num">&lt;10'</span><span class="stat-label">Para completar</span></div>
+    <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Confidencial</span></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROGRESS BAR
+     ============================================================ -->
+<div class="progress-wrapper">
+  <div class="progress-meta">
+    <span id="step-label">Paso 1 de 10</span>
+    <span id="step-pct">0%</span>
+  </div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+  <div class="step-dots" id="step-dots"></div>
+</div>
+
+<!-- ============================================================
+     FORM
+     ============================================================ -->
+<div class="form-container">
+  <form id="main-form" novalidate>
+
+    <!-- ── STEP 1: Datos básicos ── -->
+    <!-- Para agregar o quitar campos, duplique o elimine bloques .field -->
+    <div class="step active" data-step="1">
+      <div class="step-header">
+        <div class="step-eyebrow">Paso 1 · Datos de contacto</div>
+        <h2 class="step-title">Cuéntenos sobre usted</h2>
+        <p class="step-desc">Esta información es completamente confidencial y solo se usa para personalizar su diagnóstico.</p>
+      </div>
+      <div class="card">
+        <p class="required-note">Los campos marcados con <span style="color:var(--gold)">*</span> son obligatorios.</p>
+        <div class="field-group" style="margin-bottom:16px">
+          <div class="field">
+            <label>Nombre completo <span class="req">*</span></label>
+            <input type="text" id="f-name" placeholder="Su nombre y apellido" required>
+          </div>
+          <div class="field">
+            <label>Empresa o emprendimiento <span class="req">*</span></label>
+            <input type="text" id="f-company" placeholder="Nombre del negocio" required>
+          </div>
+        </div>
+        <div class="field-group" style="margin-bottom:16px">
+          <div class="field">
+            <label>Ciudad</label>
+            <input type="text" id="f-city" placeholder="Ej: Quito, Guayaquil...">
+          </div>
+          <div class="field">
+            <label>WhatsApp <span class="req">*</span></label>
+            <input type="tel" id="f-phone" placeholder="0985..." required>
+          </div>
+        </div>
+        <div class="field-group" style="margin-bottom:16px">
+          <div class="field">
+            <label>Correo electrónico</label>
+            <input type="email" id="f-email" placeholder="correo@empresa.com">
+          </div>
+          <div class="field">
+            <!-- OPCIÓN DE ROL — agregar opciones en el <select> -->
+            <label>Cargo o rol <span class="req">*</span></label>
+            <select id="f-role" required>
+              <option value="">Seleccione...</option>
+              <option value="Dueño / Socio">Dueño / Socio</option>
+              <option value="Gerente / Administrador">Gerente / Administrador</option>
+              <option value="Responsable de área">Responsable de área</option>
+              <option value="Emprendedor">Emprendedor</option>
+              <option value="Colaborador">Colaborador</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-primary" onclick="nextStep()">
+          Continuar <span class="btn-icon">→</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: Tipo de necesidad ── -->
+    <!-- PUNTAJE: sin puntaje directo, solo captura de datos -->
+    <div class="step" data-step="2">
+      <div class="step-header">
+        <div class="step-eyebrow">Paso 2 · Área de necesidad</div>
+        <h2 class="step-title">¿Qué tipo de apoyo está buscando?</h2>
+        <p class="step-desc">Seleccione el área que mejor describe su necesidad principal.</p>
+      </div>
+      <div class="card">
+        <div class="options-grid">
+          <!-- Para cambiar opciones, edite value="" y el texto del label -->
+          <label class="option-card"><input type="radio" name="need" value="Finanzas y control del negocio" required><span class="option-label"><span class="check-dot"></span>💰 Finanzas y control del negocio</span></label>
+          <label class="option-card"><input type="radio" name="need" value="Marketing digital y generación de clientes"><span class="option-label"><span class="check-dot"></span>📣 Marketing digital y generación de clientes</span></label>
+          <label class="option-card"><input type="radio" name="need" value="Automatización / CRM / procesos"><span class="option-label"><span class="check-dot"></span>⚙️ Automatización / CRM / procesos</span></label>
+          <label class="option-card"><input type="radio" name="need" value="Estudios de mercado"><span class="option-label"><span class="check-dot"></span>🔍 Estudios de mercado</span></label>
+          <label class="option-card"><input type="radio" name="need" value="Cumplimiento legal, tributario o regulatorio"><span class="option-label"><span class="check-dot"></span>📋 Cumplimiento legal, tributario o regulatorio</span></label>
+          <label class="option-card"><input type="radio" name="need" value="Protección de datos personales"><span class="option-label"><span class="check-dot"></span>🔒 Protección de datos personales</span></label>
+          <label class="option-card"><input type="radio" name="need" value="Venta o valoración de negocio"><span class="option-label"><span class="check-dot"></span>🏢 Venta o valoración de negocio</span></label>
+          <label class="option-card"><input type="radio" name="need" value="Alimentos y bebidas / gastronomía"><span class="option-label"><span class="check-dot"></span>🍽️ Alimentos y bebidas / gastronomía</span></label>
+          <label class="option-card"><input type="radio" name="need" value="Otro"><span class="option-label"><span class="check-dot"></span>➕ Otro</span></label>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-ghost" onclick="prevStep()">← Atrás</button>
+        <button type="button" class="btn btn-primary" onclick="nextStep()">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Etapa del negocio ── -->
+    <!-- PUNTAJE: ver función getStageScore() en JS -->
+    <div class="step" data-step="3">
+      <div class="step-header">
+        <div class="step-eyebrow">Paso 3 · Etapa del negocio</div>
+        <h2 class="step-title">¿En qué etapa se encuentra su negocio hoy?</h2>
+        <p class="step-desc">Seleccione la opción que mejor describe su situación actual.</p>
+      </div>
+      <div class="card">
+        <div class="options-grid">
+          <!-- Para modificar puntajes, edite getStageScore() en el JS -->
+          <label class="option-card"><input type="radio" name="stage" value="Solo idea" required><span class="option-label"><span class="check-dot"></span>💡 Solo tengo una idea</span></label>
+          <label class="option-card"><input type="radio" name="stage" value="Emprendimiento en planificación"><span class="option-label"><span class="check-dot"></span>📐 Emprendimiento en planificación</span></label>
+          <label class="option-card"><input type="radio" name="stage" value="Negocio operando informalmente"><span class="option-label"><span class="check-dot"></span>🛒 Negocio operando informalmente</span></label>
+          <label class="option-card"><input type="radio" name="stage" value="Negocio formalizado y operando"><span class="option-label"><span class="check-dot"></span>✅ Negocio formalizado y operando</span></label>
+          <label class="option-card"><input type="radio" name="stage" value="Empresa en crecimiento"><span class="option-label"><span class="check-dot"></span>📈 Empresa en crecimiento</span></label>
+          <label class="option-card"><input type="radio" name="stage" value="Empresa con problema urgente"><span class="option-label"><span class="check-dot"></span>🚨 Empresa con problema urgente</span></label>
+          <label class="option-card"><input type="radio" name="stage" value="Empresa consolidada buscando optimización"><span class="option-label"><span class="check-dot"></span>🏆 Empresa consolidada buscando optimización</span></label>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-ghost" onclick="prevStep()">← Atrás</button>
+        <button type="button" class="btn btn-primary" onclick="nextStep()">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: Problema principal (texto libre) ── -->
+    <div class="step" data-step="4">
+      <div class="step-header">
+        <div class="step-eyebrow">Paso 4 · Su situación</div>
+        <h2 class="step-title">¿Qué problema quiere resolver?</h2>
+        <p class="step-desc">En sus propias palabras. Entre más detalle, mejor podremos orientarle.</p>
+      </div>
+      <div class="card">
+        <div class="field field-group single">
+          <label>Describa brevemente el problema o necesidad principal <span class="req">*</span></label>
+          <textarea id="f-problem" placeholder="Ej: No sé si mi negocio es rentable, mis ventas bajaron este año y no entiendo por qué. Quiero ordenar mis finanzas antes de tomar decisiones importantes..." required></textarea>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-ghost" onclick="prevStep()">← Atrás</button>
+        <button type="button" class="btn btn-primary" onclick="nextStep()">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 5: Urgencia ── -->
+    <!-- PUNTAJE: 0-3 según value data-score — edite data-score para ajustar -->
+    <div class="step" data-step="5">
+      <div class="step-header">
+        <div class="step-eyebrow">Paso 5 · Urgencia</div>
+        <h2 class="step-title">¿Con qué urgencia necesita resolver esto?</h2>
+        <p class="step-desc">Sea honesto/a. Esto nos ayuda a priorizar el tipo de atención adecuada.</p>
+      </div>
+      <div class="card">
+        <div class="options-grid two-col">
+          <!-- data-score = puntaje asignado a esa opción. Editar para modificar lógica -->
+          <label class="option-card"><input type="radio" name="urgency" value="Solo estoy explorando opciones" data-score="0" required><span class="option-label"><span class="check-dot"></span>Solo estoy explorando opciones<span class="option-score">0 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="urgency" value="Me interesa resolverlo en los próximos 3 a 6 meses" data-score="1"><span class="option-label"><span class="check-dot"></span>Resolverlo en 3 a 6 meses<span class="option-score">1 pt</span></span></label>
+          <label class="option-card"><input type="radio" name="urgency" value="Necesito resolverlo este mes" data-score="2"><span class="option-label"><span class="check-dot"></span>Necesito resolverlo este mes<span class="option-score">2 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="urgency" value="Es urgente y necesito avanzar esta semana" data-score="3"><span class="option-label"><span class="check-dot"></span>Es urgente, necesito avanzar esta semana<span class="option-score">3 pts</span></span></label>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-ghost" onclick="prevStep()">← Atrás</button>
+        <button type="button" class="btn btn-primary" onclick="nextStep()">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 6: Capacidad de decisión ── -->
+    <!-- PUNTAJE: 0-3 según data-score -->
+    <div class="step" data-step="6">
+      <div class="step-header">
+        <div class="step-eyebrow">Paso 6 · Rol en la decisión</div>
+        <h2 class="step-title">¿Cuál es su rol frente a esta decisión?</h2>
+        <p class="step-desc">Esto nos permite entender quién estaría involucrado en el proceso.</p>
+      </div>
+      <div class="card">
+        <div class="options-grid two-col">
+          <label class="option-card"><input type="radio" name="decision" value="Solo estoy averiguando para otra persona" data-score="0" required><span class="option-label"><span class="check-dot"></span>Solo averiguo para otra persona<span class="option-score">0 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="decision" value="Participo en la decisión, pero no decido solo/a" data-score="1"><span class="option-label"><span class="check-dot"></span>Participo, pero no decido solo/a<span class="option-score">1 pt</span></span></label>
+          <label class="option-card"><input type="radio" name="decision" value="Soy parte del equipo directivo" data-score="2"><span class="option-label"><span class="check-dot"></span>Soy parte del equipo directivo<span class="option-score">2 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="decision" value="Soy dueño/a o responsable de aprobar" data-score="3"><span class="option-label"><span class="check-dot"></span>Soy dueño/a o apruebo directamente<span class="option-score">3 pts</span></span></label>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-ghost" onclick="prevStep()">← Atrás</button>
+        <button type="button" class="btn btn-primary" onclick="nextStep()">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 7: Presupuesto ── -->
+    <!-- PUNTAJE: 0-4 según data-score. Edite para ajustar umbrales -->
+    <div class="step" data-step="7">
+      <div class="step-header">
+        <div class="step-eyebrow">Paso 7 · Presupuesto</div>
+        <h2 class="step-title">Si encontramos una solución viable, ¿qué inversión consideraría?</h2>
+        <p class="step-desc">No se compromete a nada. Esto nos ayuda a diseñar la propuesta adecuada para usted.</p>
+      </div>
+      <div class="card">
+        <div class="options-grid">
+          <label class="option-card"><input type="radio" name="budget" value="No tengo presupuesto definido" data-score="0" required><span class="option-label"><span class="check-dot"></span>No tengo presupuesto definido<span class="option-score">0 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="budget" value="Menos de $100" data-score="0"><span class="option-label"><span class="check-dot"></span>Menos de $100<span class="option-score">0 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="budget" value="$100 a $300" data-score="1"><span class="option-label"><span class="check-dot"></span>$100 a $300<span class="option-score">1 pt</span></span></label>
+          <label class="option-card"><input type="radio" name="budget" value="$300 a $700" data-score="2"><span class="option-label"><span class="check-dot"></span>$300 a $700<span class="option-score">2 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="budget" value="$700 a $1.500" data-score="3"><span class="option-label"><span class="check-dot"></span>$700 a $1.500<span class="option-score">3 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="budget" value="Más de $1.500" data-score="4"><span class="option-label"><span class="check-dot"></span>Más de $1.500<span class="option-score">4 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="budget" value="Depende del alcance y retorno esperado" data-score="3"><span class="option-label"><span class="check-dot"></span>Depende del alcance y retorno<span class="option-score">3 pts</span></span></label>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-ghost" onclick="prevStep()">← Atrás</button>
+        <button type="button" class="btn btn-primary" onclick="nextStep()">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 8: Información disponible ── -->
+    <!-- PUNTAJE: 0-3 según data-score -->
+    <div class="step" data-step="8">
+      <div class="step-header">
+        <div class="step-eyebrow">Paso 8 · Información disponible</div>
+        <h2 class="step-title">¿Con qué información cuenta hoy sobre su negocio?</h2>
+        <p class="step-desc">Contar con datos organizados agiliza el proceso de diagnóstico.</p>
+      </div>
+      <div class="card">
+        <div class="options-grid two-col">
+          <label class="option-card"><input type="radio" name="info" value="No tengo información organizada" data-score="0" required><span class="option-label"><span class="check-dot"></span>No tengo información organizada<span class="option-score">0 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="info" value="Tengo información parcial" data-score="1"><span class="option-label"><span class="check-dot"></span>Tengo información parcial<span class="option-score">1 pt</span></span></label>
+          <label class="option-card"><input type="radio" name="info" value="Tengo documentos o datos básicos" data-score="2"><span class="option-label"><span class="check-dot"></span>Tengo documentos o datos básicos<span class="option-score">2 pts</span></span></label>
+          <label class="option-card"><input type="radio" name="info" value="Tengo información suficiente para analizar" data-score="3"><span class="option-label"><span class="check-dot"></span>Tengo información suficiente para analizar<span class="option-score">3 pts</span></span></label>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-ghost" onclick="prevStep()">← Atrás</button>
+        <button type="button" class="btn btn-primary" onclick="nextStep()">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 9: Expectativa ── -->
+    <!-- PENALIZACIÓN si selecciona "resolver todo gratis" — ver JS penaltyScore -->
+    <div class="step" data-step="9">
+      <div class="step-header">
+        <div class="step-eyebrow">Paso 9 · Expectativa</div>
+        <h2 class="step-title">¿Qué espera de la consulta inicial gratuita?</h2>
+        <p class="step-desc">Sea realista. Esto nos permite orientarle mejor desde el primer contacto.</p>
+      </div>
+      <div class="card">
+        <div class="options-grid">
+          <!-- data-penalty aplica una penalización al puntaje total -->
+          <label class="option-card"><input type="radio" name="expectation" value="Quiero orientación general" data-penalty="0" required><span class="option-label"><span class="check-dot"></span>🧭 Quiero orientación general</span></label>
+          <label class="option-card"><input type="radio" name="expectation" value="Quiero saber precios" data-penalty="0"><span class="option-label"><span class="check-dot"></span>💲 Quiero saber precios</span></label>
+          <label class="option-card"><input type="radio" name="expectation" value="Quiero validar si mi problema tiene solución" data-penalty="0"><span class="option-label"><span class="check-dot"></span>✅ Quiero validar si mi problema tiene solución</span></label>
+          <label class="option-card"><input type="radio" name="expectation" value="Quiero una propuesta formal" data-penalty="0"><span class="option-label"><span class="check-dot"></span>📄 Quiero una propuesta formal</span></label>
+          <label class="option-card"><input type="radio" name="expectation" value="Quiero contratar un servicio" data-penalty="0"><span class="option-label"><span class="check-dot"></span>🤝 Quiero contratar un servicio</span></label>
+          <!-- PENALIZACIÓN ACTIVADA: data-penalty="-3" reduce el puntaje -->
+          <label class="option-card"><input type="radio" name="expectation" value="Quiero resolver todo en la consulta gratuita" data-penalty="-3"><span class="option-label"><span class="check-dot"></span>⚡ Quiero resolver todo en la consulta gratuita</span></label>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-ghost" onclick="prevStep()">← Atrás</button>
+        <button type="button" class="btn btn-primary" onclick="nextStep()">Continuar →</button>
+      </div>
+    </div>
+
+    <!-- ── STEP 10: Servicio esperado ── -->
+    <div class="step" data-step="10">
+      <div class="step-header">
+        <div class="step-eyebrow">Paso 10 · Tipo de servicio</div>
+        <h2 class="step-title">¿Qué tipo de servicio se ajusta mejor a lo que necesita?</h2>
+        <p class="step-desc">Último paso. Luego calculamos su diagnóstico automáticamente.</p>
+      </div>
+      <div class="card">
+        <div class="options-grid">
+          <label class="option-card"><input type="radio" name="service" value="Diagnóstico" required><span class="option-label"><span class="check-dot"></span>🔬 Diagnóstico</span></label>
+          <label class="option-card"><input type="radio" name="service" value="Asesoría puntual"><span class="option-label"><span class="check-dot"></span>💬 Asesoría puntual</span></label>
+          <label class="option-card"><input type="radio" name="service" value="Proyecto cerrado"><span class="option-label"><span class="check-dot"></span>📦 Proyecto cerrado</span></label>
+          <label class="option-card"><input type="radio" name="service" value="Acompañamiento mensual"><span class="option-label"><span class="check-dot"></span>🔄 Acompañamiento mensual</span></label>
+          <label class="option-card"><input type="radio" name="service" value="Implementación"><span class="option-label"><span class="check-dot"></span>🚀 Implementación</span></label>
+          <label class="option-card"><input type="radio" name="service" value="No estoy seguro/a"><span class="option-label"><span class="check-dot"></span>🤔 No estoy seguro/a</span></label>
+        </div>
+      </div>
+      <div class="nav-buttons">
+        <button type="button" class="btn btn-ghost" onclick="prevStep()">← Atrás</button>
+        <button type="button" class="btn btn-gold btn-large" onclick="calculateResult()">
+          <span>Calcular mi diagnóstico</span> <span class="btn-icon">✦</span>
+        </button>
+      </div>
+    </div>
+
+  </form><!-- end form -->
+
+  <!-- ============================================================
+       RESULT SECTION
+       ============================================================ -->
+  <div id="result-section">
+
+    <!-- Score ring -->
+    <div class="step-header">
+      <div class="step-eyebrow">Diagnóstico completado</div>
+      <h2 class="step-title">Resultado de su evaluación</h2>
+      <p class="step-desc">Basado en sus respuestas, este es el perfil de su caso.</p>
+    </div>
+
+    <div class="score-ring">
+      <div class="score-ring-num" id="score-display">—</div>
+      <div class="score-ring-label">Puntaje de calificación</div>
+      <div class="score-bar"><div class="score-bar-fill" id="score-bar-fill"></div></div>
+      <div class="text-muted" id="score-max-label">sobre 13 puntos posibles</div>
+    </div>
+
+    <!-- Result card -->
+    <div class="result-hero" id="result-card">
+      <div class="result-icon" id="result-icon">?</div>
+      <div>
+        <div class="result-grade" id="result-grade">—</div>
+        <div class="result-title" id="result-title">—</div>
+        <div class="result-message" id="result-message">—</div>
+      </div>
+    </div>
+
+    <!-- Summary table -->
+    <div class="summary-card">
+      <div class="summary-header">📋 Resumen de su diagnóstico</div>
+      <div id="summary-rows"></div>
+    </div>
+
+    <!-- Recommended next step -->
+    <div class="card" style="margin-bottom:20px; border-left: 4px solid var(--gold);">
+      <div style="font-size:.78rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">Recomendación de siguiente paso</div>
+      <div id="next-step-text" style="font-size:.9rem; line-height:1.65;"></div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-buttons">
+      <button class="btn btn-gold btn-large" onclick="sendWhatsApp()">
+        <span class="btn-icon">💬</span> Enviar por WhatsApp
+      </button>
+      <button class="btn btn-primary" onclick="copyResult()">
+        <span class="btn-icon">📋</span> Copiar resumen
+      </button>
+      <button class="btn btn-secondary" onclick="resetForm()">
+        <span class="btn-icon">↺</span> Nuevo diagnóstico
+      </button>
+    </div>
+
+  </div><!-- end result-section -->
+
+</div><!-- end form-container -->
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="site-footer">
+  <img src="https://cdn.prod.website-files.com/65e9cac6233da645d7f7257d/65f30a9df3b2e06205ee7c55_LOGO.svg"
+       alt="Martínez Palacios" style="height:32px;width:auto;opacity:.7;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;filter:brightness(0) invert(0.5) sepia(1) saturate(2) hue-rotate(5deg);"><br>
+  <strong>Martínez Palacios Consultores Asociados</strong> · Ecuador<br>
+  <a href="https://wa.me/593985707777">WhatsApp: 0985707777</a> ·
+  <a href="mailto:consultas@martinezpalacios.com">consultas@martinezpalacios.com</a> ·
+  <a href="http://www.martinezpalacios.com" target="_blank">www.martinezpalacios.com</a><br><br>
+  <span>Este diagnóstico es informativo. Los resultados no constituyen un compromiso contractual.</span>
+</footer>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">
+  <span id="toast-icon">✓</span>
+  <span id="toast-text">Copiado al portapapeles</span>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT — lógica principal
+     Edite las secciones marcadas con ✏️ para personalizar
+     ============================================================ -->
+<script>
+/* ============================================================
+   CONFIGURACIÓN GLOBAL ✏️
+   Edite aquí para cambiar el contacto de WhatsApp
+   ============================================================ */
+const WHATSAPP_NUMBER = '593985707777'; // Número con código de país, sin +
+
+/* ============================================================
+   CONFIGURACIÓN GOOGLE SHEETS ✏️
+   Pegue aquí la URL del Web App de Google Apps Script
+   Pasos: ver instrucciones al final del archivo
+   ============================================================ */
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwYvKImXB4fuH-TM9Vv3fI1JCg4C3FUd6RXwRNA4Kp0FQqqRga088lEBhdi1Y_fIctd/exec';
+
+/* ============================================================
+   ESTADO
+   ============================================================ */
+const TOTAL_STEPS = 10;
+let currentStep = 1;
+
+/* ============================================================
+   NAVEGACIÓN
+   ============================================================ */
+function nextStep() {
+  if (!validateStep(currentStep)) return;
+  if (currentStep < TOTAL_STEPS) {
+    currentStep++;
+    showStep(currentStep);
+  }
+}
+function prevStep() {
+  if (currentStep > 1) {
+    currentStep--;
+    showStep(currentStep);
+  }
+}
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  const el = document.querySelector(`.step[data-step="${n}"]`);
+  if (el) el.classList.add('active');
+  updateProgress(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function updateProgress(n) {
+  const pct = Math.round(((n - 1) / TOTAL_STEPS) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('step-label').textContent = `Paso ${n} de ${TOTAL_STEPS}`;
+  document.getElementById('step-pct').textContent = pct + '%';
+  document.querySelectorAll('.step-dot').forEach((dot, i) => {
+    dot.classList.remove('active', 'done');
+    if (i + 1 === n) dot.classList.add('active');
+    else if (i + 1 < n) dot.classList.add('done');
+  });
+}
+
+// Build step dots
+(function buildDots() {
+  const c = document.getElementById('step-dots');
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const d = document.createElement('span');
+    d.className = 'step-dot' + (i === 1 ? ' active' : '');
+    d.title = `Paso ${i}`;
+    c.appendChild(d);
+  }
+})();
+
+/* ============================================================
+   VALIDACIÓN POR PASO
+   ============================================================ */
+function validateStep(n) {
+  let valid = true;
+  let msg = '';
+
+  if (n === 1) {
+    const name  = document.getElementById('f-name').value.trim();
+    const co    = document.getElementById('f-company').value.trim();
+    const phone = document.getElementById('f-phone').value.trim();
+    const role  = document.getElementById('f-role').value;
+    if (!name)  { msg = 'Por favor ingrese su nombre completo.'; valid = false; }
+    else if (!co)    { msg = 'Por favor ingrese el nombre de su empresa.'; valid = false; }
+    else if (!phone) { msg = 'Por favor ingrese su número de WhatsApp.'; valid = false; }
+    else if (!role)  { msg = 'Por favor seleccione su cargo o rol.'; valid = false; }
+  }
+
+  const radioSteps = { 2:'need', 3:'stage', 5:'urgency', 6:'decision', 7:'budget', 8:'info', 9:'expectation', 10:'service' };
+  if (radioSteps[n]) {
+    const sel = document.querySelector(`input[name="${radioSteps[n]}"]:checked`);
+    if (!sel) { msg = 'Por favor seleccione una opción para continuar.'; valid = false; }
+  }
+  if (n === 4) {
+    const pb = document.getElementById('f-problem').value.trim();
+    if (!pb) { msg = 'Por favor describa brevemente su problema o necesidad.'; valid = false; }
+  }
+
+  if (!valid) { showToast('⚠️', msg, true); }
+  return valid;
+}
+
+/* ============================================================
+   PUNTAJE POR ETAPA DEL NEGOCIO ✏️
+   Modifique los valores numéricos para cambiar el peso
+   ============================================================ */
+function getStageScore(stage) {
+  const map = {
+    'Solo idea': 0,
+    'Emprendimiento en planificación': 1,
+    'Negocio operando informalmente': 1,
+    'Negocio formalizado y operando': 2,
+    'Empresa en crecimiento': 3,
+    'Empresa con problema urgente': 3,
+    'Empresa consolidada buscando optimización': 3
+  };
+  return map[stage] || 0;
+}
+
+/* ============================================================
+   CÁLCULO DE RESULTADO
+   ============================================================ */
+function calculateResult() {
+  if (!validateStep(10)) return;
+
+  // Recoger puntajes de campos con data-score
+  function getScore(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? parseInt(el.dataset.score || 0, 10) : 0;
+  }
+  function getVal(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '';
+  }
+  function getPenalty(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? parseInt(el.dataset.penalty || 0, 10) : 0;
+  }
+
+  const urgencyScore   = getScore('urgency');       // 0-3
+  const decisionScore  = getScore('decision');      // 0-3
+  const budgetScore    = getScore('budget');        // 0-4
+  const infoScore      = getScore('info');          // 0-3
+  const stage          = getVal('stage');
+  const stageScore     = getStageScore(stage);      // 0-3 (ver función arriba)
+  const expectPenalty  = getPenalty('expectation'); // 0 o -3
+
+  /* ── PUNTAJE MÁXIMO POSIBLE: 3+3+4+3+3 = 16, penalización max -3
+     Ajuste MAX_SCORE si cambia los puntajes individuales ── */
+  const MAX_SCORE = 16;
+  const rawScore = urgencyScore + decisionScore + budgetScore + infoScore + stageScore + expectPenalty;
+  const totalScore = Math.max(0, rawScore); // nunca negativo
+
+  /* ============================================================
+     CLASIFICACIÓN DE LEADS ✏️
+     Modifique los umbrales numéricos para ajustar la clasificación
+     ============================================================ */
+  let classification, grade, icon, title, message, nextStep, cssClass;
+
+  /* ============================================================
+     CLASIFICACION DE LEADS
+     Objetivo: proteger el tiempo del consultor.
+     Solo llega a consulta gratuita quien demuestra
+     las 3 señales de compra REALES de forma SIMULTANEA.
+     ------------------------------------------------------------
+     Puntaje maximo: 16 pts  |  Penalizacion max: -3 pts
+
+     A - Consulta GRATUITA : >= 11 pts
+                             Y urgencia   >= 2  (necesita resolverlo pronto)
+                             Y decision   >= 2  (tiene poder real de aprobar)
+                             Y presupuesto >= 2  (tiene rango concreto $300+)
+                             Las 3 señales deben cumplirse JUNTAS.
+                             Si falla una sola -> cae a B automaticamente.
+
+     B - Asesoria PAGADA   : >= 6 pts y no cumple A
+                             Hay interes real pero le falta una señal clave.
+
+     C - Mas informacion   : >= 3 pts y info <= 1 y no cumple A/B
+                             Hay interes pero sin datos para trabajar.
+
+     D - No califica       : resto (0-5 pts, o penalizacion activa)
+                             Sin urgencia, sin presupuesto, sin decision.
+     ------------------------------------------------------------
+     Para ajustar: edite solo los numeros en cada IF.
+     Orden de evaluacion: A -> B -> C -> D (en cascada, no cambiar orden).
+     ============================================================ */
+
+  // A: CONSULTA GRATUITA - las 3 señales son obligatorias simultaneamente
+  // Si una sola falla -> cae directo a B, sin excepcion
+  // Editar: 11 (puntaje total minimo), 2 (urgencia min), 2 (decision min), 2 (presupuesto min)
+  if (totalScore >= 11 && urgencyScore >= 2 && decisionScore >= 2 && budgetScore >= 2) {
+    classification = 'A';
+    grade = 'LEAD CALIFICADO';
+    icon = '✓';
+    title = 'Califica para Consulta Inicial Gratuita';
+    message = 'Su caso califica para una consulta inicial gratuita. Nuestro equipo podrá revisar su situación en detalle y orientar los siguientes pasos con claridad. Estamos listos para atenderle.';
+    nextStep = '📞 Contáctenos ahora por WhatsApp al <strong>0985707777</strong> o escriba a <strong>consultas@martinezpalacios.com</strong> para agendar su sesión gratuita. Mencione que completó este diagnóstico previo.';
+    cssClass = 'result-A';
+
+  // B: ASESORIA PUNTUAL PAGADA - interes real, pero le falta al menos una señal clave
+  // Editable: 6 (puntaje minimo). Subir este numero hace el filtro mas estricto.
+  } else if (totalScore >= 6) {
+    classification = 'B';
+    grade = 'ASESORÍA PUNTUAL';
+    icon = '💬';
+    title = 'Recomendamos una Asesoría Puntual';
+    message = 'Por el tipo de necesidad y el perfil de su caso, recomendamos una asesoría puntual pagada. Esto nos permitirá revisar su situación con la profundidad necesaria y entregarle recomendaciones concretas en una sesión enfocada.';
+    nextStep = '📋 Puede consultar las modalidades de asesoría puntual escribiendo a <strong>consultas@martinezpalacios.com</strong> o por WhatsApp al <strong>0985707777</strong>. Cuéntenos su presupuesto y buscamos la alternativa más conveniente.';
+    cssClass = 'result-B';
+
+  // C: MAS INFORMACION - hay señal minima pero sin datos para preparar la sesion
+  // Editables: 3 (puntaje minimo), 1 (maximo de infoScore para activar C)
+  } else if (totalScore >= 3 && infoScore <= 1) {
+    classification = 'C';
+    grade = 'INFORMACIÓN INSUFICIENTE';
+    icon = '📋';
+    title = 'Necesitamos Más Información';
+    message = 'Antes de agendar una consulta, necesitamos información adicional para entender mejor su requerimiento y asignar al consultor adecuado. Completar algunos datos básicos sobre su negocio nos permitirá preparar una sesión mucho más útil para usted.';
+    nextStep = '📂 Le sugerimos reunir información básica de su negocio: ventas aproximadas, gastos principales, estructura organizacional. Luego contáctenos al <strong>0985707777</strong> y podremos agendar con mayor precisión.';
+    cssClass = 'result-C';
+
+  // ── D: NO CALIFICA POR EL MOMENTO ──────────────────────────
+  // Sin urgencia, sin presupuesto, sin poder de decisión,
+  // o expectativa de resolver todo en la consulta gratuita (penalización activa)
+  } else {
+    classification = 'D';
+    grade = 'NO CALIFICA POR AHORA';
+    icon = '⏸';
+    title = 'Por el Momento no Califica para Consulta Gratuita';
+    message = 'Su caso actualmente no cumple los criterios para una consulta gratuita. Esto puede deberse a urgencia baja, presupuesto no definido, falta de capacidad de decisión o expectativas que no se alinean con el alcance de la consulta gratuita. Esto no es definitivo.';
+    nextStep = '💡 Le recomendamos organizar su información, definir mejor su necesidad y volver a completar este diagnóstico cuando esté más preparado/a. También puede visitar <strong>www.martinezpalacios.com</strong> para conocer nuestros servicios y sus precios.';
+    cssClass = 'result-D';
+  }
+
+  // Datos del formulario
+  const data = {
+    nombre:     document.getElementById('f-name').value.trim(),
+    empresa:    document.getElementById('f-company').value.trim(),
+    ciudad:     document.getElementById('f-city').value.trim() || 'No indicada',
+    whatsapp:   document.getElementById('f-phone').value.trim(),
+    correo:     document.getElementById('f-email').value.trim() || 'No indicado',
+    rol:        document.getElementById('f-role').value,
+    necesidad:  getVal('need'),
+    etapa:      stage,
+    problema:   document.getElementById('f-problem').value.trim(),
+    urgencia:   getVal('urgency'),
+    decision:   getVal('decision'),
+    presupuesto:getVal('budget'),
+    informacion:getVal('info'),
+    expectativa:getVal('expectation'),
+    servicio:   getVal('service'),
+    puntaje:    totalScore,
+    resultado:  classification + ' – ' + title
+  };
+
+  // Mostrar resultado
+  document.getElementById('main-form').style.display = 'none';
+  const rs = document.getElementById('result-section');
+  rs.classList.add('visible');
+
+  document.getElementById('score-display').textContent = totalScore;
+  document.getElementById('score-max-label').textContent = `sobre ${MAX_SCORE} puntos posibles`;
+
+  setTimeout(() => {
+    const pct = Math.min(100, Math.round((totalScore / MAX_SCORE) * 100));
+    document.getElementById('score-bar-fill').style.width = pct + '%';
+  }, 100);
+
+  const card = document.getElementById('result-card');
+  card.className = 'result-hero ' + cssClass;
+  document.getElementById('result-icon').textContent   = icon;
+  document.getElementById('result-grade').textContent  = grade;
+  document.getElementById('result-title').textContent  = title;
+  document.getElementById('result-message').textContent = message;
+  document.getElementById('next-step-text').innerHTML   = nextStep;
+
+  // Progress to 100%
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('step-label').textContent = 'Diagnóstico completado';
+  document.getElementById('step-pct').textContent = '100%';
+  document.querySelectorAll('.step-dot').forEach(d => d.classList.add('done'));
+
+  // Build summary rows
+  buildSummary(data);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Store for copy/WA
+  window._diagData = data;
+  window._diagText = buildText(data, message, nextStep.replace(/<[^>]*>/g,''));
+
+  // Enviar automáticamente a Google Sheets
+  sendToSheets(data);
+}
+
+/* ============================================================
+   CONSTRUIR TABLA DE RESUMEN
+   ============================================================ */
+function buildSummary(d) {
+  const rows = [
+    ['Nombre',         d.nombre],
+    ['Empresa',        d.empresa],
+    ['Ciudad',         d.ciudad],
+    ['WhatsApp',       d.whatsapp],
+    ['Correo',         d.correo],
+    ['Cargo / Rol',    d.rol],
+    ['Área de necesidad', d.necesidad],
+    ['Etapa del negocio', d.etapa],
+    ['Problema principal', d.problema],
+    ['Urgencia',       d.urgencia],
+    ['Capacidad de decisión', d.decision],
+    ['Presupuesto',    d.presupuesto],
+    ['Información disponible', d.informacion],
+    ['Expectativa consulta', d.expectativa],
+    ['Servicio esperado', d.servicio],
+    ['Puntaje obtenido', d.puntaje + ' puntos'],
+    ['RESULTADO',      d.resultado],
+  ];
+  const container = document.getElementById('summary-rows');
+  container.innerHTML = '';
+  rows.forEach(([k, v]) => {
+    const row = document.createElement('div');
+    row.className = 'summary-row';
+    row.innerHTML = `<div class="summary-key">${k}</div><div class="summary-val">${v || '—'}</div>`;
+    container.appendChild(row);
+  });
+}
+
+/* ============================================================
+   TEXTO PLANO PARA COPIAR / WHATSAPP
+   ============================================================ */
+function buildText(d, msg, next) {
+  const line = '─────────────────────────────';
+  return [
+    '✦ DIAGNÓSTICO PREVIO – MARTÍNEZ PALACIOS CONSULTORES',
+    line,
+    `📌 Nombre: ${d.nombre}`,
+    `🏢 Empresa: ${d.empresa}`,
+    `📍 Ciudad: ${d.ciudad}`,
+    `📞 WhatsApp: ${d.whatsapp}`,
+    `📧 Correo: ${d.correo}`,
+    `👤 Rol: ${d.rol}`,
+    line,
+    `🎯 Necesidad: ${d.necesidad}`,
+    `📊 Etapa: ${d.etapa}`,
+    `❓ Problema: ${d.problema}`,
+    `⚡ Urgencia: ${d.urgencia}`,
+    `🏛 Decisión: ${d.decision}`,
+    `💰 Presupuesto: ${d.presupuesto}`,
+    `📂 Información: ${d.informacion}`,
+    `🎯 Expectativa: ${d.expectativa}`,
+    `🛠 Servicio: ${d.servicio}`,
+    line,
+    `📈 PUNTAJE: ${d.puntaje} puntos`,
+    `✅ RESULTADO: ${d.resultado}`,
+    line,
+    `💡 RECOMENDACIÓN: ${msg}`,
+    `👉 SIGUIENTE PASO: ${next}`,
+    line,
+    'www.martinezpalacios.com | 0985707777'
+  ].join('\n');
+}
+
+function copyResult() {
+  if (!window._diagText) return;
+  navigator.clipboard.writeText(window._diagText).then(() => {
+    showToast('✓', 'Resumen copiado al portapapeles');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = window._diagText;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('✓', 'Resumen copiado');
+  });
+}
+
+function sendWhatsApp() {
+  if (!window._diagText) return;
+  const text = encodeURIComponent(window._diagText);
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, '_blank');
+}
+
+function resetForm() {
+  currentStep = 1;
+  document.getElementById('main-form').style.display = 'block';
+  document.getElementById('result-section').classList.remove('visible');
+  document.getElementById('main-form').reset();
+  showStep(1);
+}
+
+/* ============================================================
+   ENVÍO A GOOGLE SHEETS
+   ✏️ No edite esta función — solo cambie SHEETS_URL arriba
+   ============================================================ */
+function sendToSheets(d) {
+  if (!SHEETS_URL || SHEETS_URL === 'PEGUE_AQUI_SU_URL_DE_APPS_SCRIPT') {
+    console.warn('Google Sheets: URL no configurada. Pegue su Apps Script URL en SHEETS_URL.');
+    return;
+  }
+
+  // Indicador visual de envío
+  const btn = document.querySelector('.action-buttons');
+  const indicator = document.createElement('div');
+  indicator.id = 'sheets-status';
+  indicator.style.cssText = 'font-size:.8rem;color:var(--gray-500);margin-top:8px;display:flex;align-items:center;gap:6px;';
+  indicator.innerHTML = '<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> Guardando en Google Sheets...';
+  btn.insertAdjacentElement('afterend', indicator);
+
+  // Construir payload — columnas en el mismo orden que la hoja
+  const payload = {
+    fecha:       new Date().toLocaleString('es-EC', { timeZone: 'America/Guayaquil' }),
+    nombre:      d.nombre,
+    empresa:     d.empresa,
+    ciudad:      d.ciudad,
+    whatsapp:    d.whatsapp,
+    correo:      d.correo,
+    rol:         d.rol,
+    necesidad:   d.necesidad,
+    etapa:       d.etapa,
+    problema:    d.problema,
+    urgencia:    d.urgencia,
+    decision:    d.decision,
+    presupuesto: d.presupuesto,
+    informacion: d.informacion,
+    expectativa: d.expectativa,
+    servicio:    d.servicio,
+    puntaje:     d.puntaje,
+    resultado:   d.resultado
+  };
+
+  // Apps Script requiere no-cors; usamos imagen truco como fallback
+  // pero fetch con mode no-cors igual envía los datos
+  fetch(SHEETS_URL, {
+    method:  'POST',
+    mode:    'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(payload)
+  })
+  .then(() => {
+    indicator.innerHTML = '✅ Diagnóstico guardado en Google Sheets';
+    indicator.style.color = 'var(--res-green)';
+  })
+  .catch(() => {
+    // no-cors a veces lanza error aunque haya funcionado; intentar vía GET como backup
+    const params = new URLSearchParams(payload).toString();
+    const img = new Image();
+    img.src = SHEETS_URL + '?' + params;
+    indicator.innerHTML = '✅ Diagnóstico enviado';
+    indicator.style.color = 'var(--res-green)';
+  });
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(icon, msg, isError) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-text').textContent = msg;
+  t.style.background = isError ? '#7c2d12' : 'var(--navy)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+</script>
+
+<style>
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
+</body>
+</html>
